@@ -1,5 +1,6 @@
 # apex-batch-delete
-Simple Apex Batch class for deleting data inside an environment in the correct order,
+Simple Apex Batch class for deleting data inside a Salesforce environment for the objects specified.
+The batch class chains over itself until it's processed all objects.
 
 Deploy to Org and run:
 `Database.executeBatch(new MassDeleteBatch());`
