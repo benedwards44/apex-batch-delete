@@ -25,12 +25,14 @@ public class MassDeleteBatch implements Database.Batchable<SObject> {
     // Default Constructor to start on first object in list
     public MassDeleteBatch() {
         this.currentObjectName = OBJECT_NAMES[0];
+        this.validatePermissions();
     }
 
     // Constructor to accept object name to process job for/
     // This is called in the finish method to process the next object
     public MassDeleteBatch(String objectName) {
         this.currentObjectName = objectName;
+        this.validatePermissions();
     }
 
     // Query for all records in the current object
@@ -53,6 +55,12 @@ public class MassDeleteBatch implements Database.Batchable<SObject> {
         if (getNextObject() != null) {
 
             Database.executeBatch(new MassDeleteBatch(getNextObject()));
+        }
+    }
+
+    public void validatePermissions() {
+        if (!FeatureManagement.checkPermission('Mass_Data_Delete')) {
+            throw new DataCleanupBatchException('The Mass Data Delete Permission is required in order to run this job.');
         }
     }
 
@@ -79,4 +87,6 @@ public class MassDeleteBatch implements Database.Batchable<SObject> {
 
         return null;
     }
+
+    public class MassDeleteBatchException extends Exception {}
 }
